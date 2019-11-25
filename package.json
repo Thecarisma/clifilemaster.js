@@ -3,9 +3,13 @@
   "version": "1.0.0",
   "description": "File system functions that aren't included in the native fs module with promise support.",
   "main": "index.js",
+  "files": [
+    "src/"
+  ],
   "scripts": {
-    "test": "node ./tests/index.js"
+    "test": "node ./test/index.js"
   },
+  "homepage": "https://github.com/Thecarisma/zeusfs.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Thecarisma/zeusfs.js.git"
@@ -33,7 +37,7 @@
     "mkdirs",
     "json"
   ],
-  "author": "Azeez Adewale",
+  "author": "Azeez Adewale <azeezadewale98@gmail.com>",
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Thecarisma/zeusfs.js/issues"
