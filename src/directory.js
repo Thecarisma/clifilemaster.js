@@ -82,9 +82,99 @@ function dirContentSync(dirPath, opts) {
 	
 }
 
-//function lsDir
+//internal test
+function ls(dirPath, row, opts, cb) {
+	if (typeof opts === 'function' && !cb) {
+		cb = opts;
+		opts = {};
+	} 
+	
+	//cb = cb || function () {};
+	opts = opts || {};
+	
+	return new Promise(async function(resolve, reject) {
+		await dirContent(dirPath, async function(err, result) {
+			if (err) {
+				if (cb) cb(err);
+				return reject(err);
+			}
+			
+			var ret ;
+			await contentPrettyStr(result, row, function(_err, _result) {
+				if (_err) {
+					if (cb) cb(_err);
+					return reject(_err);
+				}
+				ret = _result;
+			});
+			
+			
+			if (cb) cb(undefined, ret);
+			return resolve(ret);
+		});
+	});	
+	
+}
+
+//internal test
+function lsSync(dirPath, row, opts, cb) {
+	if (typeof opts === 'function' && !cb) {
+		cb = opts;
+		opts = {};
+	} 
+	
+	//cb = cb || function () {};
+	opts = opts || {};
+	var result;
+	var ret;
+	
+	try {
+		ret = dirContentSync(dirPath, opts);
+		result = contentPrettyStrSync(ret, row);
+	} catch (err) {
+		throw err;
+		return;
+	}
+	return result;
+}
+
+function contentPrettyStr(content, row, cb) {
+	return new Promise(async function(resolve, reject) {
+		var _ret = contentPrettyStrSync(content, row);
+		if (cb) cb(undefined, _ret);
+		return resolve(_ret);
+	});
+}
+
+function contentPrettyStrSync(content, row) {
+	var conLen = content.length;
+	var _ret = (conLen > 0 ? content[0].parent_path + ":\n" : "");
+	var rowDelimeter = (conLen/row) | 0 - 1;
+	var x = 0, y = 0; 
+	if (!row) row = 1;
+	for (; y < row; y++) {
+		var limit = y * rowDelimeter;
+		for (; x < conLen; x++) {
+			_ret += ("[" + (x+1) + "] " 
+					+ "[" + (content[x].is_dir === true ? "D" : "F") + "] " 
+					+ content[x].name + "\n");
+			if (x===rowDelimeter) {
+				break;
+			}
+		}
+		
+	}
+	
+	_ret += "\n";
+	_ret += ("[" + ".." + "] Go up a directory");
+	return _ret;
+}
 
 module.exports = {
     dirContent,
-	dirContentSync
+	dirContentSync,
+	ls,
+	lsSync,
+	contentPrettyStr,
+	contentPrettyStrSync
 };
